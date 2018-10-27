@@ -8,6 +8,7 @@ from pip._internal.exceptions import (
     HashMismatch, HashMissing, InstallationError,
 )
 from pip._internal.utils.misc import read_chunks
+from pip._internal.utils.typing import MYPY_CHECK_RUNNING
 
 # The recommended hash algo of the moment. Change this whenever the state of
 # the art changes; it won't hurt backward compatibility.
@@ -17,6 +18,9 @@ FAVORITE_HASH = 'sha256'
 # Names of hashlib algorithms allowed by the --hash option and ``pip hash``
 # Currently, those are the ones at least as collision-resistant as sha256.
 STRONG_HASHES = ['sha256', 'sha384', 'sha512']
+
+if MYPY_CHECK_RUNNING:
+    from typing import Dict, Optional  # noqa: F401
 
 
 class Hashes(object):
@@ -29,7 +33,7 @@ class Hashes(object):
         :param hashes: A dict of algorithm names pointing to lists of allowed
             hex digests
         """
-        self._allowed = {} if hashes is None else hashes
+        self._allowed = {} if hashes is None else hashes  # type:Optional[Dict]
 
     def check_against_chunks(self, chunks):
         """Check good hashes against ones built from iterable of chunks of
